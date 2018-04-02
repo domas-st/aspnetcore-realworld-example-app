@@ -1,23 +1,33 @@
+using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
-using MediatR;
+using Conduit.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Conduit.Features.Tags
 {
     [Route("tags")]
     public class TagsController : Controller
     {
-        private readonly IMediator _mediator;
+        private readonly ConduitContext context;
 
-        public TagsController(IMediator mediator)
+        public TagsController(ConduitContext context)
         {
-            _mediator = mediator;
+            this.context = context ?? throw new System.ArgumentNullException(nameof(context));
         }
 
         [HttpGet]
-        public async Task<TagsEnvelope> Get()
+        public async Task<TagsEnvelope> Get(CancellationToken cancellationToken)
         {
-            return await _mediator.Send(new List.Query());
+            var tags = await this.context.Tags
+                .OrderBy(x => x.TagId)
+                .AsNoTracking()
+                .ToListAsync(cancellationToken);
+            return new TagsEnvelope()
+            {
+                Tags = tags.Select(x => x.TagId).ToList()
+            };
         }
     }
 }

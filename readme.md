@@ -14,12 +14,8 @@ For more information on how to this works with other frontends/backends, head ov
 
 # How it works
 
-This is using ASP.NET Core with:
+This is using ASP.NET Core **without MediatR** with:
 
-- CQRS and [MediatR](https://github.com/jbogard/MediatR)
-    - [Simplifying Development and Separating Concerns with MediatR](https://blogs.msdn.microsoft.com/cdndevs/2016/01/26/simplifying-development-and-separating-concerns-with-mediatr/)
-    - [CQRS with MediatR and AutoMapper](https://lostechies.com/jimmybogard/2015/05/05/cqrs-with-mediatr-and-automapper/)
-    - [Thin Controllers with CQRS and MediatR](https://codeopinion.com/thin-controllers-cqrs-mediatr/)
 - [AutoMapper](http://automapper.org)
 - [Fluent Validation](https://github.com/JeremySkinner/FluentValidation)
 - Feature folders and vertical slices

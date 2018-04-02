@@ -1,5 +1,4 @@
 using System.Threading.Tasks;
-using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Conduit.Features.Profiles
@@ -7,20 +6,17 @@ namespace Conduit.Features.Profiles
     [Route("profiles")]
     public class ProfilesController : Controller
     {
-        private readonly IMediator _mediator;
+        private readonly IProfileReader profileReader;
 
-        public ProfilesController(IMediator mediator)
+        public ProfilesController(IProfileReader profileReader)
         {
-            _mediator = mediator;
+            this.profileReader = profileReader ?? throw new System.ArgumentNullException(nameof(profileReader));
         }
 
         [HttpGet("{username}")]
         public async Task<ProfileEnvelope> Get(string username)
         {
-            return await _mediator.Send(new Profiles.Details.Query()
-            {
-                Username = username
-            });
+            return await this.profileReader.ReadProfile(username);
         }
     }
 }

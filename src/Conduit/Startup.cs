@@ -4,7 +4,6 @@ using Conduit.Infrastructure;
 using Conduit.Infrastructure.Errors;
 using Conduit.Infrastructure.Security;
 using FluentValidation.AspNetCore;
-using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -23,9 +22,6 @@ namespace Conduit
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMediatR();
-            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationPipelineBehavior<,>));
-
             services
                 .AddEntityFrameworkSqlite()
                 .AddDbContext<ConduitContext>();
@@ -45,6 +41,7 @@ namespace Conduit
             services.AddMvc(opt =>
                 {
                     opt.Conventions.Add(new GroupByApiRootConvention());
+                    // runs only before controller method invokation and has no influence on mediatR Requests
                     opt.Filters.Add(typeof(ValidatorActionFilter));
                 })
                 .AddJsonOptions(opt =>
@@ -60,7 +57,7 @@ namespace Conduit
             services.AddScoped<ICurrentUserAccessor, CurrentUserAccessor>();
             services.AddScoped<IProfileReader, ProfileReader>();
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-            
+
             services.AddJwt();
         }
 

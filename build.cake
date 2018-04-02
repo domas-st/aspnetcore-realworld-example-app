@@ -1,6 +1,18 @@
 var target = Argument("target", "Default");
 var tag = Argument("tag", "cake");
 
+var binaryDir = Directory("./src/Conduit/bin");
+var objectDir = Directory("./src/Conduit/obj");
+var publishDir = Directory("./publish");
+
+Task("Clean")
+   .Does(() =>
+{
+	CleanDirectory(binaryDir);
+	CleanDirectory(objectDir);
+	CleanDirectory(publishDir);
+});
+
 Task("Restore")
   .Does(() =>
 {
@@ -31,7 +43,7 @@ Task("Publish")
         Framework = "netcoreapp2.0",
         Configuration = "Release",
         OutputDirectory = "./publish",
-        Runtime = "linux-x64",
+        Runtime = "win7-x64", //https://docs.microsoft.com/de-de/dotnet/core/rid-catalog
         VersionSuffix = tag
     };
                 

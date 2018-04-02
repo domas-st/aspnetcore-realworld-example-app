@@ -2,14 +2,13 @@
 using System.IO;
 using System.Threading.Tasks;
 using Conduit.Infrastructure;
-using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Conduit.IntegrationTests
 {
     public class SliceFixture : IDisposable
     {
-        private readonly IServiceScopeFactory _scopeFactory;
+        protected readonly IServiceScopeFactory scopeFactory;
 
         private readonly string DbName = Guid.NewGuid() + ".db";
 
@@ -25,9 +24,8 @@ namespace Conduit.IntegrationTests
 
             var provider = services.BuildServiceProvider();
 
-
             provider.GetRequiredService<ConduitContext>().Database.EnsureCreated();
-            _scopeFactory = provider.GetService<IServiceScopeFactory>();
+            scopeFactory = provider.GetService<IServiceScopeFactory>();
         }
 
         public void Dispose()
@@ -37,7 +35,7 @@ namespace Conduit.IntegrationTests
 
         public async Task ExecuteScopeAsync(Func<IServiceProvider, Task> action)
         {
-            using (var scope = _scopeFactory.CreateScope())
+            using (var scope = scopeFactory.CreateScope())
             {
                 await action(scope.ServiceProvider);
             }
@@ -45,30 +43,10 @@ namespace Conduit.IntegrationTests
 
         public async Task<T> ExecuteScopeAsync<T>(Func<IServiceProvider, Task<T>> action)
         {
-            using (var scope = _scopeFactory.CreateScope())
+            using (var scope = scopeFactory.CreateScope())
             {
                 return await action(scope.ServiceProvider);
             }
-        }
-
-        public Task<TResponse> SendAsync<TResponse>(IRequest<TResponse> request)
-        {
-            return ExecuteScopeAsync(sp =>
-            {
-                var mediator = sp.GetService<IMediator>();
-
-                return mediator.Send(request);
-            });
-        }
-
-        public Task SendAsync(IRequest request)
-        {
-            return ExecuteScopeAsync(sp =>
-            {
-                var mediator = sp.GetService<IMediator>();
-
-                return mediator.Send(request);
-            });
         }
 
         public Task ExecuteDbContextAsync(Func<ConduitContext, Task> action)
