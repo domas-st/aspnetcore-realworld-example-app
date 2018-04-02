@@ -32,6 +32,9 @@ Install the .NET Core SDK and lots of documentation: [https://www.microsoft.com/
 
 Documentation for ASP.NET Core: [https://docs.microsoft.com/en-us/aspnet/core/](https://docs.microsoft.com/en-us/aspnet/core/)
 
+Specify Target Runtime in build.cake:
+- `Runtime = "win7-x64", //https://docs.microsoft.com/de-de/dotnet/core/rid-catalog`
+
 Build on OS X and Linux:
 
 - `./build.sh build.cake`
